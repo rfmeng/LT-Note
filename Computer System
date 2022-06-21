@@ -1,0 +1,348 @@
+class question{;}
+//	C1. Tour of computer systems
+//  1.1 Information = context + bits
+//  	1 byte = 8 bits (0/1)
+
+//  C2. Representing and Manipulating Information
+//  2.1 Information storage
+//  2.1.1 Hexadecimal notation
+//		start with 0x
+//	2.1.2 Data size
+//		word size: nominal size of pointer -> size of virtual memory
+//		32/64-bit program has backward compatibility
+		uint64_t num1; // fixed size int
+		int64_t num2; // signed int
+//		for 32-bit program: int to store pointer, not work for 64
+//	2.1.3 Addressing and byte ordering
+//		pointer points to the first byte of a object, contiguous bytes in virtual memory
+//		big endian for 0x1234567 is 01 23 45 67; small endian is 67 45 23 01
+//		use cast to circumvent type system
+//	2.1.4 Representing strings
+//		string are more platform independent
+//	2.1.5 Boolean algebra
+//	2.1.6 Bitwise operation
+//		bit mask (least significant 8 bits)
+//	2.1.7 Logical operation (the second argument will not be calculated with effective first)
+//	2.1.9 Shift operations (logical and arithmetic)
+//	2.2 Integer representations
+//	2.2.1 Integral data types
+//	2.2.3 Two's-complement encodings (sign bit with complement)
+//	2.2.4 Conversion between signed and unsigned: bit-level
+//	2.2.5 Signed vs unsigned in C
+		a=12345u, b=1234U; // create unsigned
+		(2147483647 > (int) 2147483648U) // 1, signed 
+//	2.2.6 Expanding the bit-representation of a number
+		short sx = -12345;
+		unsigned uy = sx; // equivalent to unsigned int uy = sx;
+//  2.2.7 Truncating numbers (literal meaning)
+//	2.2.8 Advice on signed vs unsigned
+//		avoid implicit casting
+		unsigned a=0;
+		cout << a - 1 << endl; // bug here
+//	2.3 Integer arithmetic
+//	2.3.1 Unsigned addition (literally truncating)
+//		overflow equivalent to s<x
+//	2.3.2 Two's-complement addition (same bit view truncating)
+//		overflow principle
+//	2.3.3 Two's complement negation (equivalent to ~x+1)
+//	2.3.4 Unsigned/Two's-complement multiplication (mod 2**w)
+//	(* checking computation overflow)
+//	(malloc's argument is always int32, should be set none for overflow)
+//	2.3.6 (Multiplying/dividing) by constants (logical shift: plain shift)
+//		(negative number division? definition)
+//	2.4 Floating point
+//	2.4.2 IEEE floating-point representation
+//		M*2**E (follows the integer comparsion bit pattern)
+//		integer to float
+//	2.4.4 Rounding
+//		4 rounding modes, default is round to even/nearest
+//	2.4.5 Float-point operations (?) 2.84
+//		lack of associativity
+//	2.4.6 Floating point in C
+
+
+
+
+//	3. Machine-Level Representation of Programs
+//	3.1 A historical perspective
+//  3.2 Program Encodings
+//	3.2.1 Machine-level code
+//		linux> gcc -Og -o(executable code) p p1.c p2.c
+//		generate program
+//	3.2.2 Code examples
+//		linux> gcc -Og -S(assmebly file .s) mstore.c
+//		linux> gcc -Og -c(object code .o) mstore.c
+//		x86-64 instructions range in length from 1 to 15 bytes (prefix code)
+//		pushq suffix q: size designator
+//		linux> gcc -Og -o prog main.c mstore.c (from the latter two, prog also has code to interact with OS)
+//		disassmbler: from .o or .exe to .s
+//		nop to make the code 16 bytes, for memory performance
+//	3.2.3 Notes on formatting
+//		exist cases to combine C code and assembly code (by linex gcc)
+//		assembly code: ATT format and Intel format
+//	3.3 Data formats (p206)
+question q1; //		Intel: word stands for a 16 bits data (?p207, l no ambiguity)
+//	3.4 Accessing information
+//		16 general purpose registers (p208)
+//	3.4.1 Operand specifiers
+//		constant, register, memory (general form)
+//	3.4.2 Data movement instructions
+//		mov class without any transformation, not allowed from memory to memory
+//			exception: movl, set the high-order 4 bytes to 0 with register destination
+//			movq: source can only be 32-bit two's complement number (question: how to differ int and unsigned)
+//			movabsq: destination can only be register 
+//		movz/movs class: register/memory to register
+//			cltq: sign extend (FF extend) %eax to %rax
+//	3.4.3 Data movement examples
+//		*expansion of unsigned is by zero extension/two's complement is by sign
+//		*p216 data movement (expansion and compression)
+//		from down to bottom
+//		double <- float
+//		long
+//		unsigned
+//		int <- char, short
+//	3.4.4 Pushing and Popping Stack Data
+//		memory stack start at the address with larger values
+//		
+//	3.5 Arithmetic and Logical Operations
+//	3.5.1 Load effective address (leaq, compiler trick, destination must be register)
+//	3.5.2 Unary and Binary Operations
+//		Destination: register or memory, source can also be immediate value
+//		source and destination cannot both be memory
+//	3.5.3 Shift Operations 
+//		if shift %cl, it will ignore all higher bits except 2**m=w
+//	3.5.4 Discussion
+//	3.5.5 Special Arithmetic Operations	
+//		full multiplication and division (%rdx:%rax)
+//		mulq/imulq S : R[%rdx]:R[%rax] <- S × R[%rax]
+//		divq/idivq S : R[%rdx] <- R[%rdx]:R[%rax] mod S, R[%rax] <- R[%rdx]:R[%rax]÷ S
+//	3.6 Control
+//	3.6.1 Condition Codes
+//		CF, ZF, SF, OF; cmp (sub), test (and)
+//		shift: OF=0, CF=last bit shifted out
+//		XOR: CF, OF=0
+//		inc and dec: CF unchanged
+//		cmp and test do sub and and without altering registers
+//		CF is set to 1 when a-b<0
+//	3.6.2 Accessing the Condition Codes
+//		set: based on t=a-b, a single byte
+//	3.6.3 Jump Instructions
+//		jmp: 
+//	3.6.4 Jump Instruction Encodings
+//		PC-relative encoding
+//		PC jump some bits starting from the address of the next instruction
+//	3.6.5 Implementing Conditional Branches with Conditional Control
+//		cmpq $2, %rsi
+//		jle .L3	(if %rsi <= 2 then jump)
+//	3.6.6 Implementing Conditional Branches with Conditional Moves
+//		conditional assign with single instruction: cmov class, from memory/register to register
+//		instruction pipeline (misprediction penalty), jump has penalty 
+//		but only used in restricted cases without branch side effect
+//	3.6.7 Loops
+//		do while: straightforward
+//		while: jump to middle (jump to condition)/guarded do (test first)
+//		* difference between & and &&, & is bitwise, && is short circuit
+//		for loop actually add i++ at the end before jmp, but continue will goto after the i++
+//		question: andl and movl similarity
+//	3.6.8 Switch Statements
+//		jump table
+//	3.7 Procedures
+//		Procedure nesting functions: pass control, pass data, allocation and deallocation
+//	3.7.1 The Run-Time Stack
+//	3.7.2 Control Transfer
+//		stack pointer %rsp, points to the run-time stack for variables to store resume address
+//		program pointer %rip, points to the address of the instruction
+//	3.7.3 Data Transfer
+//		
+//	3.7.4 Local Storage on the Stack
+//		question: local variables padding
+//	3.7.5 Local Storage in Registers
+//		question: p280, align stack frame
+//	3.7.6 Recursive Procedures
+//	
+//	3.8 Array Allocation and Access
+//	3.8.2 Pointer Arithmetic
+//	3.8.3 Nested Arrays
+		int A[5][3];
+		// equivalent to (question)
+		typedef int row3_t[3];
+		row3_t A[5];
+//	3.8.4 Fixed-Size Arrays
+//		a way to optimize matrix multiplication
+//		*(p+1) corresponds to movl 4(%rdx),%eax, implying the array is arranged with the first element being top of stack
+//	3.8.5 Variable-Size Arrays		
+//		compiler has some optimization methods,
+//		but with variable size, it cannot transfer constant multiplication to shift or etc.
+//	3.9 Heterogeneous Data Structures
+//	3.9.1 Structures
+//		defined by compiler with offset, no information about name of field in the machine code
+//	3.9.2 Unions
+		double d = 3.14159;
+		unsigned long u = (unsigned long) d; // will be transformed arismetically; by union logical transform is allowed
+//	3.9.3 Data Alignment
+//		alignment restriction, typically 1, 2, 4, 8
+//		process fetched [8] bytes from memory
+//		alignment means starting with an address which is a multiple of 8
+//		char*,short,double,char,float,char; offset: 0,8,16,24,28,32
+//		primitive object of K bytes must have address that is a multiple of K,
+//		so a struct might need further padding (int;int;char;)
+
+//	3.10 Combining Control and Data in Machine-Level Programs
+//	3.10.1 Understanding Pointers
+//		pointer type casting (like (void*) malloc)
+//		for char* p, (int *) p+7 computes p + 28, while (int *) (p+7) computes p + 7,
+//		(Recall that casting has higher precedence than addition.)
+//		function pointer:
+		int fun(int x, int *p);
+		int (*fp)(int, int *); // declare function pointer
+		fp = fun;
+		int y = 1;
+		int result = fp(3, &y);
+//	3.10.2 GDB debugger	
+//		linux> gdb prog
+//	3.10.3 Out-of-Bounds Memory References and Buffer Overflow
+//		strlen() of char a[]; a strange strlen()+1 here (for '\0')
+//	3.10.4 Thwarting Buffer Overflow Attacks
+//		Stack Randomization; Stack Corruption Detection (canary code); Limiting Executable Code Regions
+//	3.10.5 Supporting Variable-Size Stack Frames
+//		leave is equvalent to
+//			movq %rbp, %rsp
+//			popq %rbp (simple and fast)
+//		necessity of frame pointer? -to avoid calculation when deallocating
+//	3.11 Floating-Point Code
+//		vmovs class: between M and X
+//		vmovap class: between X and Xs
+//	3.11.1 Floating-Point Movement and Conversion Operations
+//		weird transformation
+//	3.11.2 Floating-Point Code in Procedures
+//		All XMM registers are caller saved.
+//	3.11.3 Floating-Point Arithmetic Operations
+//	3.11.4 Defining and Using Floating-Point Constants
+
+
+
+
+
+//	4. Processor Architecture	
+//	4.1 The Y86-64 Instruction Set Architecture
+//	4.1.1 Programmer-Visible State
+//		registers, condition codes, program status, memory and program counter		
+//	4.1.2 Y86-64 Instructions (prefix code)
+//	4.1.3 Instruction Encoding
+//		register ID, 0x0-0xE, 0xF to indicate no register should be accessed (question, x86?)
+//		Y86-64 use little endian, instruction address grows from smaller to larger
+//	4.1.4 Y86-64 Exceptions
+//		AOK,HLT,ADR,INS
+//	4.1.5 Y86-64 Programs
+//	4.1.6 Some Y86-64 Instruction Details
+//		pushq %rsp	# push the original (%rsp) 
+//		popq %rsp	# return the poped memory value, same to mrmovq (%rsp), %rsp
+//	4.2 Logic Design and the Hardware Control Language HCL
+//	4.2.1 Logic Gates
+//	4.2.2 Combinational Circuits and HCL Boolean Expressions
+//		some restrictions		
+//	4.2.3 Word-Level Combinational Circuits and HCL Integer Expressions
+//	4.2.4 Set Membership
+//		
+//	4.2.5 Memory and Clocking
+//	4.3 Sequential Y86-64 Implementations
+//	4.3.1 Organizing Processing into Stages
+//		Fetch, decode, execute, memory, write back, PC update
+//	4.3.2 SEQ Hardware Structure
+//	4.3.3 SEQ Timing
+//	4.3.4 SEQ Stage Implementations
+//		Fetch stage: HCL for need_regids
+
+
+//	4.4 General Principles of Pipelining
+//	4.4.1 Computational pipelines
+//		improve the utilization rate of the combinatory logic part: three instructions being processced simultaneously
+//		1: | A | B | C |
+//		2:	   | A | B | C |
+//		3:	       | A | B | C |
+//	4.4.2 A Detailed Look at Pipeline Operation	
+//		writing into register happened as soon as clock rise (voltage rise), otherwise nothing of register will be changed
+//		CPU frequency is the frequence of the clock
+//	4.4.3 Limitations of Pipelining
+//		nonuniform partitioning (different delay)
+//		diminishing return of deep pipelining (not dividing infinitely)
+//	4.4.4 Pipeling a System with Feedback
+//		1: | A | B | C |
+//		2:	   | A | B | C |
+//		3:	       | A | B | C |
+//		if A of 3 need the result(C) of 1 , have to alter the behavior
+//
+//		
+//	4.5 Pipelined Y86-64 Implementations
+//	4.5.1 SEQ+: Rearranging the Computation Stages
+//	4.5.2 Inserting Pipeline Registers
+//		Pipe-, insert pipeline register between any two stages
+//	4.5.3 Rearranging and Relabeling Signals
+//	4.5.4 Next PC Prediction
+//		jmp, cmov and ret cannot determine PC
+//		branch prediction; assume conditional branches are always taken
+//		for ret, hold off processing any other instructions until the ret passes write back
+//		(return address stack from call can be constructed, not always reliable)
+//	4.5.5 Pipeline Hazards
+//		data hazard:
+//		irmovq $10,%rdx
+//		irmovq $3,%rax
+//		addq %rdx,%rax (value writes to register only in write back stage)
+//		solution for data hazard:
+//		stall a group of instructions
+//		forward the input of write back stage to the decode stage
+//		load from memory, use by decode data hazard: stall+forward
+//		control hazard:
+//		
+//		
+//		
+//	5.	Optimizing Program Performance
+//	5.1 Capabilities and Limitations of Optimizing Compilers
+//		-O2 has become the accepted standard for most software projects that use gcc
+//		memory aliasing, a major optimization blocker; side effect
+//	5.2 Expressing Program Performance
+//		loop unrolling -> Cycle Per Element
+//	5.3 Program example
+//		calloc() will initializing the returned memory
+//	5.4 Eliminating Loop Inefficiencies
+//		avoid computing the same value
+//	5.5 Reducing Procedure Calls
+		
+//	5.7 Understanding Modern Processors
+//	
+//	5.8 Loop Unrolling
+//		
+//		
+//		
+//		
+//		
+//		
+//		
+//		
+//		
+//		
+//		
+//		
+//		
+//		
+//		
+//		
+//		
+//		
+//		
+//		
+//		
+//		
+//		
+//		
+//		
+//		
+//		
+//		
+//		
+//		
+//		
+//		
+//		
+//		
+//		

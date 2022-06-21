@@ -1,0 +1,31 @@
+
+<p class="bug or example">
+<script>
+	window.onload = function(){
+	  var sm_open_list = $("p#sm_open");
+	  var sm_close_list = $("p#sm_close");//关闭操作详情按钮
+	  var tab_box2_list = $('div#tab_box2');
+	  // sm_open_list.length = 2
+	  for (var i =0;i<sm_open_list.length;i++){
+		console.log("a:"+i.toString());
+		sm_open_list[i].onclick = function(){ 
+		  console.log("b:"+i.toString()); 
+		  // always 2, this i is a reference
+		  // 1. use let instead of var
+		  // 2. closure, there is no block scope in JS, only function scope. It be like 
+		  	 function CreateFunction(i){return function(){sm_close_list[i].something=something;};}
+		  	 sm_open_list[i].onclick = CreateFunction(i);
+		  // 3. forEach
+		  tab_box2_list[i].style.height = "360px";
+		  sm_close_list[i].style.display = "block";
+		  sm_open_list[i].style.display = "none";
+		};
+		sm_close_list[i].onclick = function(){
+		  tab_box2_list[i].style.height = "100px";
+		  sm_close_list[i].style.display = "none";
+		  sm_open_list[i].style.display = "block";
+		};
+	  }
+};
+</script>
+</p>
